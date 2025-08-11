@@ -8,28 +8,34 @@ var password = builder.AddParameter("SqlPassword", "Password12*", true);
 #endregion
 
 #region Product
-var mssqlDb = builder.AddSqlServer("SqlServer")
-    .WithLifetime(ContainerLifetime.Persistent)
-    .WithHostPort(1233)
-    .WithPassword(password)
-    ;
+//var mssqlDb = builder.AddSqlServer("SqlServer")
+//    .WithLifetime(ContainerLifetime.Persistent)
+//    .WithHostPort(1233)
+//    .WithPassword(password)
+//    ;
 
-var productDb = mssqlDb.AddDatabase("ProductDb");
+//var productDb = mssqlDb.AddDatabase("ProductDb");
+
+var redis = builder.AddRedis("cache")
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithHostPort(6379);
 
 builder.AddProject<Aspire_ProductWebAPI>("product")
-    .WithReference(productDb)
-    .WaitFor(productDb);
+    //.WithReference(productDb)
+    //.WaitFor(productDb)
+    .WithReference(redis)
+    .WaitFor(redis);
 #endregion
 
 #region Category
-var postgreDb = builder.AddPostgres("Postgres", userName, password, 5432)
-    .WithLifetime(ContainerLifetime.Persistent)
-    ;
-var categoryDb = postgreDb.AddDatabase("categorydb");
+//var postgreDb = builder.AddPostgres("Postgres", userName, password, 5432)
+//    .WithLifetime(ContainerLifetime.Persistent)
+//    ;
+//var categoryDb = postgreDb.AddDatabase("categorydb");
 
-builder.AddProject<Aspire_CategoryWebAPI>("category")
-    .WithReference(categoryDb)
-    .WaitFor(categoryDb);
+//builder.AddProject<Aspire_CategoryWebAPI>("category")
+//    .WithReference(categoryDb)
+//    .WaitFor(categoryDb);
 #endregion
 
 

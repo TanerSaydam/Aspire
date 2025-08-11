@@ -1,7 +1,11 @@
+using System.Text.Json;
 using Aspire.ProductWebAPI.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddRedisDistributedCache("cache");
 
 builder.AddSqlServerDbContext<ApplicationDbContext>("ProductDb");
 
@@ -12,9 +16,20 @@ var app = builder.Build();
 Product.SeedDataProduct();
 
 app.MapGet("/", () => "Hello World!");
-app.MapGet("/getall", () =>
+app.MapGet("/getall", (IDistributedCache cache) =>
 {
-    var res = Product.Products;
+    List<Product>? res;
+    var resString = cache.GetString("products");
+    if (resString is null)
+    {
+        res = Product.Products;
+        cache.SetString("products", JsonSerializer.Serialize(res));
+    }
+    else
+    {
+        res = JsonSerializer.Deserialize<List<Product>>(resString);
+    }
+
     return Results.Ok(res);
 });
 
