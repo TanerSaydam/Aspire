@@ -16,6 +16,14 @@ var password = builder.AddParameter("SqlPassword", "Password12*", true);
 
 //var productDb = mssqlDb.AddDatabase("ProductDb");
 
+var rabbitMq = builder.AddRabbitMQ("rabbitMQ", null, null, 5672)
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithImage("rabbitmq", "3-management")
+    .WithHttpEndpoint(port: 15672, targetPort: 15672, name: "management")
+    .WithEnvironment("RABBITMQ_DEFAULT_USER", "guest")
+    .WithEnvironment("RABBITMQ_DEFAULT_PASS", "guest")
+    ;
+
 var redis = builder.AddRedis("cache")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithHostPort(6379);
