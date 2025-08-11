@@ -9,7 +9,14 @@ builder.AddServiceDefaults();
 
 var app = builder.Build();
 
+Product.SeedDataProduct();
+
 app.MapGet("/", () => "Hello World!");
+app.MapGet("/getall", () =>
+{
+    var res = Product.Products;
+    return Results.Ok(res);
+});
 
 app.MapGet("/update-database", (ApplicationDbContext dbContext) =>
 {

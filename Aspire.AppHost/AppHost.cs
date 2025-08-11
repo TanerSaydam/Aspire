@@ -23,7 +23,8 @@ builder.AddProject<Aspire_ProductWebAPI>("product")
 
 #region Category
 var postgreDb = builder.AddPostgres("Postgres", userName, password, 5432)
-    .WithLifetime(ContainerLifetime.Persistent);
+    .WithLifetime(ContainerLifetime.Persistent)
+    ;
 var categoryDb = postgreDb.AddDatabase("categorydb");
 
 builder.AddProject<Aspire_CategoryWebAPI>("category")
